@@ -1,0 +1,39 @@
+---
+description: Clean Architecture layer boundaries and dependency rules
+alwaysApply: true
+---
+
+# Clean Architecture
+
+## Layer structure
+
+```
+src/
+├── core/          # domain, useCases, infrastructure — pure TypeScript
+├── ui/            # React delivery layer
+├── composition/   # DI / wiring only
+└── main.tsx
+```
+
+## Dependency direction (inward only)
+
+- `ui` → `useCases` (via composition/context, never infrastructure directly)
+- `useCases` → `domain` (entities + ports)
+- `infrastructure` → implements `domain/ports`
+- `composition` → wires concrete implementations
+- `core` → must NOT import from `ui`, `composition`, or React
+
+## Hard rules
+
+- **No React** in `src/core/**` (no hooks, JSX, react imports)
+- **No business rules** in `src/ui/**` (validation, calculations, domain logic belong in core)
+- **No concrete infrastructure** in `useCases` or `domain` — depend on ports (interfaces)
+- **Wiring only** in `composition/` — instantiate repos and use cases here
+
+## Adding a feature
+
+1. Entity + port in `domain/`
+2. Use case in `useCases/`
+3. Adapter in `infrastructure/`
+4. Register in `composition/container.ts`
+5. Hook + page/component in `ui/`

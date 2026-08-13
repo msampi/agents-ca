@@ -1,0 +1,67 @@
+---
+description: Rules for the UI delivery layer (React)
+globs: src/ui/**/*
+alwaysApply: false
+---
+
+# UI Layer
+
+React is the delivery mechanism. Keep it thin.
+
+## Allowed in ui/
+
+- Components, pages, layouts
+- Hooks that adapt use cases to React state (loading, error, data)
+- Providers for dependency injection
+- Styles and assets (`ui/assets/`)
+
+## Forbidden in ui/
+
+- Business rules, validations, or domain calculations
+- Direct API calls or repository implementations
+- Importing from `@core/infrastructure/**`
+
+```typescript
+// ✅ GOOD — hook delegates to use case
+const { getUsers } = useAppContext()
+const users = await getUsers.execute()
+
+// ❌ BAD — business logic in UI
+if (user.age < 18) throw new Error('Too young')
+```
+
+## Hooks
+
+- Prefix with `use` (`useUsers`, `useCreateUser`)
+- Handle only presentation concerns: state, effects, event handlers, entity → view model mapping
+- Get use cases from `AppProvider` / context, not `new GetUsers()`
+
+## Component structure (index + ui)
+
+Each visual component lives in its own folder with two files:
+
+```
+ComponentName/
+├── index.tsx   # wrapper: hooks, state, handlers, passes props
+└── ui.tsx      # presentational: props + JSX only, no use cases
+```
+
+- **`index.tsx`**: smart wrapper, imports hook/context, handles loading/error
+- **`ui.tsx`**: dumb component, no `@core` imports, no business logic
+
+```typescript
+// index.tsx
+export function UsersPage() {
+  const { users, loading, error } = useUsers()
+  if (loading) return <p>Loading...</p>
+  return <UsersUi users={users} />
+}
+
+// ui.tsx — no hooks, no use cases
+export function UsersUi({ users }: UsersUiProps) { ... }
+```
+
+## Components
+
+- Prefer function components
+- Pages compose components and hooks; no domain logic or validations

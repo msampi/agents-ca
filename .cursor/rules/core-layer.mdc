@@ -1,0 +1,61 @@
+---
+description: Rules for the core layer (domain, useCases, infrastructure)
+globs: src/core/**/*
+alwaysApply: false
+---
+
+# Core Layer
+
+Pure TypeScript. Zero React dependencies.
+
+## domain/
+
+- **entities/**: classes with business behavior and invariants
+- **ports/**: interfaces for external dependencies (repositories, services)
+- **validators/**: `Validator.ts` for input validation (required, email, etc.)
+
+Validations that affect business operations belong in use cases using `Validator`.
+Do not validate business rules in UI.
+
+```typescript
+// ✅ Port in domain
+interface UserRepository {
+  getAll(): Promise<User[]>
+}
+
+// ❌ Never import infrastructure here
+import { HttpUserRepository } from '../infrastructure/...'
+```
+
+## useCases/
+
+- One class per use case, one file per class
+- Constructor receives ports via interfaces, never concrete adapters
+- Orchestrates domain logic and validation; no HTTP, localStorage, or DOM
+- Use `Validator` before persisting or executing side effects
+
+```typescript
+class CreateUser {
+  private readonly userRepository: UserRepository
+
+  constructor(userRepository: UserRepository) {
+    this.userRepository = userRepository
+  }
+
+  async execute(input: CreateUserInput): Promise<User> {
+    const emailError = Validator.email(input.email, 'Email')
+    if (emailError) throw new ValidationError([emailError])
+    // ...
+  }
+}
+```
+
+- Class name: verb + entity, no `UseCase` suffix (`GetUsers`, `CreateUser`)
+- File name matches class: `GetUsers.ts`, `CreateUser.ts`
+
+## infrastructure/
+
+- **http/**: `HttpClient` (axios) implementing `HttpClientInterface` — swap here to change fetch/axios
+- **mappers/**: transform API responses to domain entities
+- **repositories/**: implement ports from `domain/ports/`, depend on `HttpClientInterface` (not concrete `HttpClient`) for testability
+- May import external libs (axios) — never imported by `domain/` or `useCases/`
