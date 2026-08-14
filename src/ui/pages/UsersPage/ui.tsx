@@ -1,3 +1,11 @@
+export interface UserListItem {
+  id: number
+  name: string
+  username: string
+  email: string
+  companyName: string
+}
+
 interface UsersUiProps {
   users: UserListItem[]
 }
@@ -27,12 +35,4 @@ export function UsersUi({ users }: UsersUiProps) {
       </table>
     </section>
   )
-}
-
-export interface UserListItem {
-  id: number
-  name: string
-  username: string
-  email: string
-  companyName: string
 }

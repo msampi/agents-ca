@@ -13,6 +13,7 @@ alwaysApply: false
 - **Interfaces**: `PascalCase`, no `I` prefix (`UserRepository`, not `IUserRepository`)
 - **Files**: match the main export (`GetUsers.ts`, `useUsers.ts`)
 - **Use cases**: no `UseCase` suffix — the `useCases/` folder already provides context
+- **File layout**: declare all `interface`s at the top of the file, before classes or functions
 
 ## Prefer `interface` over `type`
 

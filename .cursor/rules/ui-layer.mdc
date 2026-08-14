@@ -48,6 +48,18 @@ ComponentName/
 
 - **`index.tsx`**: smart wrapper, imports hook/context, handles loading/error
 - **`ui.tsx`**: dumb component, no `@core` imports, no business logic
+- **Interfaces at the top**: exported view models first, then props interfaces, then components/hooks
+
+```typescript
+// ui.tsx
+export interface UserListItem { ... }
+
+interface UsersUiProps {
+  users: UserListItem[]
+}
+
+export function UsersUi({ users }: UsersUiProps) { ... }
+```
 
 ```typescript
 // index.tsx
@@ -56,9 +68,6 @@ export function UsersPage() {
   if (loading) return <p>Loading...</p>
   return <UsersUi users={users} />
 }
-
-// ui.tsx — no hooks, no use cases
-export function UsersUi({ users }: UsersUiProps) { ... }
 ```
 
 ## Components
