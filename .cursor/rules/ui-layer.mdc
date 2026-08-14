@@ -49,6 +49,7 @@ ComponentName/
 - **`index.tsx`**: smart wrapper, imports hook/context, handles loading/error
 - **`ui.tsx`**: dumb component, no `@core` imports, no business logic
 - **Interfaces at the top**: exported view models first, then props interfaces, then components/hooks
+- **Props pattern in `ui.tsx`**: use `function X(props: XProps)` and destructure inside the body — avoid long parameter lists
 
 ```typescript
 // ui.tsx
@@ -58,7 +59,10 @@ interface UsersUiProps {
   users: UserListItem[]
 }
 
-export function UsersUi({ users }: UsersUiProps) { ... }
+export function UsersUi(props: UsersUiProps) {
+  const { users } = props
+  // ...
+}
 ```
 
 ```typescript

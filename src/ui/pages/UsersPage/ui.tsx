@@ -10,7 +10,9 @@ interface UsersUiProps {
   users: UserListItem[]
 }
 
-export function UsersUi({ users }: UsersUiProps) {
+export function UsersUi(props: UsersUiProps) {
+  const { users } = props
+
   return (
     <section>
       <table>

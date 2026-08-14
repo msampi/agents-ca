@@ -13,15 +13,17 @@ interface LoginUiProps {
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void
 }
 
-export function LoginUi({
-  email,
-  password,
-  loading,
-  error,
-  onEmailChange,
-  onPasswordChange,
-  onSubmit,
-}: LoginUiProps) {
+export function LoginUi(props: LoginUiProps) {
+  const {
+    email,
+    password,
+    loading,
+    error,
+    onEmailChange,
+    onPasswordChange,
+    onSubmit,
+  } = props
+
   return (
     <main className="login-page">
       <section className="login-card">
